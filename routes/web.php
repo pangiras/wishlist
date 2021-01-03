@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\SettingController; 
+
 
 
 /*
@@ -27,28 +28,7 @@ Route::middleware(['auth.shopify'])->group(function () {
     Route::view('/products','products');
     Route::view('/customers','customers');
     Route::view('/settings','settings');
-    Route::get('test', function (){
-        $shop = Auth::user();
-        $themes = $shop->api()->rest('GET', '/admin/themes.json');
-        //dd($themes['body']->container);
-        // dd($themes['body']->container['themes']);
-        
+    Route::post('configureTheme',[SettingController::class,'configureTheme']);
 
-        //get active theme id
-        $activeThemeId = "";
-        foreach($themes['body']->container['themes'] as $theme){
-            if($theme['role'] == "main"){
-                $activeThemeId = $theme['id'];
-            }
-        }
-
-        $snippet = "Your snippet code.";
-
-        //Data to pass to our rest api request
-        $array = array('asset'=>array('key' => 'snippets/yourwishlist-app.liquid', 'value' => $snippet));
-
-        $shop->api()->rest('PUT', '/admin/themes/'.$activeThemeId.'/assets.json', $array);
-        return "Successful attempt";
-    });
 
 });
